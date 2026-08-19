@@ -1078,23 +1078,23 @@ tr.warnrow td{background:#FDF8E8 !important;}
 </section>
 
  <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  // 1. Import Firebase khusus untuk file HTML biasa
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
+           setPersistence, browserLocalPersistence, sendPasswordResetEmail }
+    from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  // 2. KTP Firebase kamu nih!
   const firebaseConfig = {
-    apiKey: "AIzaSyDYmnD73_vYv2JtkM0gx4lxTxtinDhl0eg",
-    authDomain: "kocak-30cde.firebaseapp.com",
-    databaseURL: "https://kocak-30cde-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "kocak-30cde",
-    storageBucket: "kocak-30cde.firebasestorage.app",
-    messagingSenderId: "775270509730",
-    appId: "1:775270509730:web:772bc4cf23c4828200bbfb",
-    measurementId: "G-D5QJ32Q750"
+    apiKey: "AIzaSyBMNg1GqhjgbV-mLmx-9C2daRW6bTis6Es",
+    authDomain: "amarprakasa-a0d51.firebaseapp.com",
+    databaseURL: "https://amarprakasa-a0d51-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "amarprakasa-a0d51",
+    storageBucket: "amarprakasa-a0d51.firebasestorage.app",
+    messagingSenderId: "793825567872",
+    appId: "1:793825567872:web:2325d98132695a1fdaf265",
+    measurementId: "G-BTMMLXG31Q"
   };
 
   // 3. Nyalain mesin Firebase-nya
@@ -1123,9 +1123,11 @@ tr.warnrow td{background:#FDF8E8 !important;}
 
   window.firebaseSiap = new Promise(resolve => {
     let pertama = true;
+    const beres = v => { if (pertama) { pertama = false; resolve(v); } };
+    setTimeout(() => beres(null), 8000);   // jaring pengaman, jangan sampai layar tunggu abadi
     onAuthStateChanged(auth, user => {
       window.firebaseUser = user || null;
-      if (pertama) { pertama = false; resolve(user || null); }
+      beres(user || null);
       document.dispatchEvent(new CustomEvent('lc-auth', { detail: user || null }));
     });
   });
@@ -1261,11 +1263,40 @@ tr.warnrow td{background:#FDF8E8 !important;}
     Promise.resolve(window.fbKeluar()).finally(() => location.reload());
   });
 
-  /* Sesi belum diketahui: tahan di layar tunggu sampai Firebase menjawab. */
+  /* Sesi belum diketahui: tahan di layar tunggu, tapi jangan selamanya.
+     Kalau modul Firebase tidak pernah termuat, katakan apa adanya. */
+  let menunggu = 0;
   const mulai = () => {
-    if (!window.firebaseSiap) { setTimeout(mulai, 200); return; }
-    window.firebaseSiap.then(user => { if (!user) tampilkanForm(); });
+    if (window.firebaseSiap) {
+      window.firebaseSiap.then(user => { if (!user) tampilkanForm(); });
+      return;
+    }
+    menunggu += 200;
+    if (menunggu >= 6000) { gagalMuat(); return; }
+    setTimeout(mulai, 200);
   };
+
+  function gagalMuat(){
+    tunggu.hidden = true;
+    form.hidden = false;
+    masuk.disabled = true;
+    email.disabled = true;
+    sandi.disabled = true;
+    const lokal = location.protocol === 'file:';
+    bilang(lokal
+      ? 'Halaman ini dibuka langsung dari folder (file://). Modul Firebase hanya '
+        + 'bisa dimuat lewat http atau https — unggah dulu ke GitHub Pages, atau '
+        + 'jalankan server lokal dengan: python -m http.server'
+      : 'Modul Firebase gagal dimuat. Periksa koneksi internet, lalu buka Console '
+        + '(F12) dan lihat baris merahnya.', 'buruk');
+    const lagi = document.createElement('button');
+    lagi.type = 'button'; lagi.id = 'lc-gate-lagi'; lagi.className = 'tautan';
+    lagi.textContent = 'Coba lagi';
+    lagi.style.cssText = 'display:block;margin:14px auto 0;background:none;border:0;'
+      + 'color:#005B52;font:inherit;font-size:12.5px;text-decoration:underline;cursor:pointer';
+    lagi.addEventListener('click', () => location.reload());
+    pesan.after(lagi);
+  }
   mulai();
 
   document.addEventListener('lc-auth', ev => {
