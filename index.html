@@ -1078,24 +1078,28 @@ tr.warnrow td{background:#FDF8E8 !important;}
 </section>
 
  <script type="module">
-  // 1. Import Firebase khusus untuk file HTML biasa
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
-           setPersistence, browserLocalPersistence, sendPasswordResetEmail }
-    from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // 2. KTP Firebase kamu nih!
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
-    apiKey: "AIzaSyBMNg1GqhjgbV-mLmx-9C2daRW6bTis6Es",
-    authDomain: "amarprakasa-a0d51.firebaseapp.com",
-    databaseURL: "https://amarprakasa-a0d51-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "amarprakasa-a0d51",
-    storageBucket: "amarprakasa-a0d51.firebasestorage.app",
-    messagingSenderId: "793825567872",
-    appId: "1:793825567872:web:2325d98132695a1fdaf265",
-    measurementId: "G-BTMMLXG31Q"
+    apiKey: "AIzaSyDYmnD73_vYv2JtkM0gx4lxTxtinDhl0eg",
+    authDomain: "kocak-30cde.firebaseapp.com",
+    databaseURL: "https://kocak-30cde-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kocak-30cde",
+    storageBucket: "kocak-30cde.firebasestorage.app",
+    messagingSenderId: "775270509730",
+    appId: "1:775270509730:web:772bc4cf23c4828200bbfb",
+    measurementId: "G-D5QJ32Q750"
   };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 
   // 3. Nyalain mesin Firebase-nya
   const app = initializeApp(firebaseConfig);
